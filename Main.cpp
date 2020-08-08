@@ -1,44 +1,43 @@
 #include <iostream>
-#include <SDL2/SDL.h>
+#include <cmath>
+#include "Screen.h"
 
 int main() {
-  const int SCREEN_WIDTH = 1200;
-  const int SCREEN_HEIGHT = 1000;
+  std::srand(std::time(NULL));
 
-  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-    std::cout << "SDL init failed." << std::endl;
-    return 1;
+  Screen screen;
+
+  if (!screen.init()) {
+    std::cout << "Error initializing screen" << std::endl;
   }
 
-  SDL_Window *window = SDL_CreateWindow(
-      "Space Snake",
-      SDL_WINDOWPOS_UNDEFINED,
-      SDL_WINDOWPOS_UNDEFINED,
-      SCREEN_WIDTH,
-      SCREEN_HEIGHT,
-      SDL_WINDOW_SHOWN
-      );
+  while (true) {
+    int elapsed = SDL_GetTicks();
+    unsigned char green = (1 + std::sin(elapsed * 0.002)) * 128;
+    unsigned char red = (1 + std::sin(elapsed * 0.001)) * 128;
+    unsigned char blue = (1 + std::sin(elapsed * 0.003)) * 128;
 
-  if (window == NULL) {
-    SDL_Quit();
-    std::cout << "SDL window errored." << std::endl;
-    return 2;
-  }
+    screen.clear();
 
-  bool quit = false;
+    for (int i = 0; i < screen.size; i++) {
+      // Left Wall
+      screen.setPixel(screen.x, screen.y+i, red, green, blue);
+      // Top Wall
+      screen.setPixel(screen.x+i, screen.y, red, green, blue);
+      // Bottom Wall
+      screen.setPixel(screen.x+i, screen.y+screen.size, red, green, blue);
+      // Right Wall
+      screen.setPixel(screen.x+screen.size, screen.y+i, red, green, blue);
+    }
 
-  SDL_Event event;
+    screen.update();
 
-  while (!quit) {
-    while (SDL_PollEvent(&event)) {
-      if (event.type == SDL_QUIT) {
-        quit = true;
-      }
+    if (!screen.processEvents()) {
+      break;
     }
   }
 
-  SDL_DestroyWindow(window);
-  SDL_Quit();
+  screen.close();
 
   return 0;
 }

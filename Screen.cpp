@@ -2,7 +2,7 @@
 #include <iostream>
 
 Screen::Screen():
-  m_window(NULL), m_renderer(NULL), m_texture(NULL), m_buffer1(NULL), x(60), y(90) {
+  m_window(NULL), m_renderer(NULL), m_texture(NULL), m_buffer1(NULL), x(60), y(90), size(50) {
 }
 
 bool Screen::init() {
@@ -43,13 +43,13 @@ bool Screen::init() {
 
   m_buffer1 = new Uint32[SCREEN_WIDTH * SCREEN_HEIGHT];
 
-  memset(m_buffer1, 255, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
+  memset(m_buffer1, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
 
   return true;
 }
 
 void Screen::clear() {
-  memset(m_buffer1, 255, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
+  memset(m_buffer1, 0, SCREEN_WIDTH * SCREEN_HEIGHT * sizeof(Uint32));
 }
 
 bool Screen::processEvents() {
@@ -61,17 +61,13 @@ bool Screen::processEvents() {
     } else if (event.type == SDL_KEYDOWN) {
       const Uint8 *state = SDL_GetKeyboardState(NULL);
       if (state[SDL_SCANCODE_RIGHT]) {
-        std::cout << "Right Keys Pressed.\n";
-        x++;
+        x+=2;
       } else if (state[SDL_SCANCODE_LEFT]) {
-        std::cout << "Left Keys Pressed.\n";
-        x--;
+        x-=2;
       } else if (state[SDL_SCANCODE_DOWN]) {
-        std::cout << "Down Keys Pressed.\n";
-        y--;
-      /* } else if (state[SDL_SCANCODE_UP]) { */
-      /*   std::cout << "Up Keys Pressed.\n"; */
-      /*   y++; */
+        y+=2;
+      } else if (state[SDL_SCANCODE_UP]) {
+        y-=2;
       }
     }
   }
